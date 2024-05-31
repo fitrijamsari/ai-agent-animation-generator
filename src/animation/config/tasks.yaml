@@ -1,0 +1,35 @@
+generate_scene_description:
+  description: >
+    Generate an overall scene description for the famous person.
+  expected_output: >
+    A comprehensive scene description for the animation, capturing the essence of the famous person and setting the stage for the script and illustrations.
+
+generate_narration_scripts:
+  description: >
+    Create narration scripts for each frame based on the scene description..
+  expected_output: >
+    Narration scripts for each frame which should be about 5-6 seconds per frame. Ensure the tone is fun, professional, and aligned with animation identity.
+
+generate_frame_images:
+  description: >
+    Generate images for each frame based on the frame scripts.
+  expected_output: >
+    Illustrations for each frame that visually represent the script and bring the scene to life.
+
+generate_voice_over_sound:
+  description: >
+    Create voice-over sound for each frame.
+  expected_output: >
+    Voice-over scripts for each frame that provide narration and dialogue to accompany the animation.
+
+compile_video:
+  description: >
+    Compile the images, voice-over, and subtitles into a video.
+  expected_output: >
+    A final video file that integrates all elements into a cohesive animation.
+
+user_confirmation:
+  description: >
+    Confirm each generated output with the user before proceeding.
+  expected_output: >
+    User confirmation for each step to ensure the generated content meets expectations before moving to the next task.
