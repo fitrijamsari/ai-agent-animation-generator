@@ -1,0 +1,13 @@
+langchain
+langchain-openai
+langchain-groq
+openai
+mysql-connector-python
+streamlit
+python-dotenv
+tiktoken
+unstructured
+langchain_community  
+langchainhub 
+chromadb 
+langgraph
