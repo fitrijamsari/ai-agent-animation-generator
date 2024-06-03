@@ -162,3 +162,5 @@ cython_debug/
 
 #apple
 .DS_Store
+
+/research

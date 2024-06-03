@@ -14,7 +14,7 @@ class VoiceOverTool(BaseTool):
         directory_path = "./output/voice_over_sound/"
         os.makedirs(directory_path, exist_ok=True)  # Ensure the directory exists
 
-        file_path = os.path.join(directory_path, f"frame_{frame_number}.mp3")
+        file_path = os.path.join(directory_path, f"voice_over_frame_{frame_number}.mp3")
         tts = gTTS(text=narration_script, lang="en")
         tts.save(file_path)
         return f"Voice-over saved as {file_path}"
