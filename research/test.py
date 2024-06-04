@@ -37,7 +37,7 @@ scriptwriter = Agent(
     backstory="You are senior animation scriptwriter with a passion for crafting engaging and vivid scene descriptions of the biography of a {famous_person}.",
     tools=[],
     cache=True,
-    allow_delegation=False,
+    allow_delegation=True,
     verbose=True,
 )
 
@@ -47,7 +47,7 @@ screenwriter = Agent(
     backstory="A professional screenwriter with a talent for concise and impactful writing. Your experience in breaking down scenes into detailed scripts ensures each frame is meaningful and engaging.",
     tools=[],
     cache=True,
-    allow_delegation=False,
+    allow_delegation=True,
     verbose=True,
 )
 
@@ -56,6 +56,7 @@ scene_illustrator = Agent(
     goal="Generate images for each frame based on the scene description produced by scriptwriter and store them with respective frame numbers",
     backstory="An experienced artist with a flair for bringing scenes to life through illustrations.",
     tools=[image_generator_tool],
+    allow_delegation=False,
 )
 
 voice_over_agent = Agent(
@@ -78,7 +79,7 @@ video_compilation_agent = Agent(
         "bringing together images and sound to create engaging content."
     ),
     tools=[video_compiler_tool],
-    allow_delegation=False,
+    allow_delegation=True,
     verbose=True,
 )
 

@@ -7,3 +7,4 @@ unstructured
 langchain_community  
 langchainhub
 crewai
+tiktoken

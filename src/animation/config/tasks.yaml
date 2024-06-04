@@ -1,35 +1,46 @@
 generate_scene_description:
   description: >
-    Generate an overall scene description for the famous person.
+    Conduct an in-depth biography analysis of {famous_person}. Utilize all available data sources to compile a detailed profile, focusing on the live story, major achievement and contribution. This facts is crucial. Don't make assumptions and only use information you absolutely sure about.
   expected_output: >
-    A comprehensive scene description for the animation, capturing the essence of the famous person and setting the stage for the script and illustrations.
+    Produce 2 frame of comprehensive scene description that will be used as a prompt for dalle 3 image generator of the {famous_person} life story. However, replace the {famous_person} name with a fictional name. If there are any specific branding elements or trademarked words in the scene, replace them with general description, for example if there are words like Manchester United, Manchester City, Arsenal, Real Madrid, etc. you can replace with 'football club'. 
+    The life story should be covering the key facts, major achievement and contribution. Write each scene description as detail as possible with a specific setting. For instance, 'a medieval knight standing guard outside a stone castle covered in ivy.'  
+    The scene description shall be descriptive. For example, Instead of saying 'a cat,' you might say 'a photograph of a fluffy orange cat with green eyes sitting on a windowsill at sunset.'  
+    Mention on each scene description that the image should have a size of 1792x1024 with a vibrant cartoon 3D Pixar animation style and a cinematic effect.  
+    If you have a specific color scheme in mind, mention it for example 'A tranquil beach scene dominated by shades of turquoise, gold, and coral pink.
+    For the output, return the scene description for each frames as the following example:
+
+    **Frame 1: "Diego's Humble Beginnings"**
+
+    **Scene Description:** 
+    In a vibrant cartoon 3D Pixar animation style with a cinematic effect, we see a young boy named Diego, around 5 years old, playing football in a modest neighborhood. The scene is set in a small courtyard surrounded by colorful, weathered buildings, with laundry hanging from balconies and children cheering in the background. Diego, wearing a simple, tattered football jersey and shorts, is shown skillfully dribbling a slightly worn-out football, his eyes focused and full of determination. The sun is setting, casting a golden hue over the scene, and the shadows of Diego and the other children stretch across the cobblestone ground. The image size is 1792x1024. The color theme is dominated by warm shades of orange, yellow, and brown, with pops of color from the children's clothes and the surrounding buildings.
 
 generate_narration_scripts:
   description: >
-    Create narration scripts for each frame based on the scene description..
+    Create voice over scripts for each frame based on the scene description produced by scriptwriter.
   expected_output: >
-    Narration scripts for each frame which should be about 5-6 seconds per frame. Ensure the tone is fun, professional, and aligned with animation identity.
+    From the scene description, generate voice over scripts or narration for each frame as third person view. The script should be about 5-6 seconds duration per frame.
+    Ensure the tone is enthusiastic, professional, and aligned with animation identity.
+    For the output, return the narration script for each frames as the following example:
+
+    **Frame 1: "Diego's Humble Beginnings"**
+
+    **Narration Script**:
+    "In a small, vibrant neighborhood, young Diego's passion for football shines brightly. At just 5 years old, with tattered clothes and a worn-out ball, his determination is unwavering. The golden sunset casts long shadows, highlighting his every move. This is where dreams begin."
 
 generate_frame_images:
   description: >
-    Generate images for each frame based on the frame scripts.
+    Generate images for each frame based on the screen description produced by scriptwriter.
   expected_output: >
-    Illustrations for each frame that visually represent the script and bring the scene to life.
+    Use the Screen Description section produced by scriptwriter to generate images for each frame. Each images shall be stored in {image_folder}.
 
-generate_voice_over_sound:
+generate_voice_over:
   description: >
-    Create voice-over sound for each frame.
+    Generate a voice-over from narration script produce by screenwriter for each frame. Save the voice-over with the filename based on the frame number.
   expected_output: >
-    Voice-over scripts for each frame that provide narration and dialogue to accompany the animation.
+    Use the Narration Script section produce by screenwriter to generate voice-over sound for each frame. Each sound shall be stored in {audio_folder} in MP3 format.
 
-compile_video:
+generate_video:
   description: >
-    Compile the images, voice-over, and subtitles into a video.
+    Generate a video with generated images and voice-overs of respective frames.
   expected_output: >
-    A final video file that integrates all elements into a cohesive animation.
-
-user_confirmation:
-  description: >
-    Confirm each generated output with the user before proceeding.
-  expected_output: >
-    User confirmation for each step to ensure the generated content meets expectations before moving to the next task.
+    Compile generated images from the folder {image_folder} and with the respective voice-overs of each frame from the folder {audio_folder} into a single video. Save the video as {output_file}.

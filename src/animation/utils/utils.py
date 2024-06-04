@@ -2,6 +2,7 @@
 
 import os
 
+import tiktoken
 from dotenv import find_dotenv, load_dotenv
 
 
@@ -19,6 +20,22 @@ def get_serper_api_key():
     load_env()
     openai_api_key = os.getenv("SERPER_API_KEY")
     return openai_api_key
+
+
+def count_tokens(input_string: str) -> int:
+    tokenizer = tiktoken.get_encoding("cl100k_base")
+
+    tokens = tokenizer.encode(input_string)
+
+    return len(tokens)
+
+
+def calculate_cost(input_string: str, cost_per_million_tokens: float = 5) -> float:
+    num_tokens = count_tokens(input_string)
+
+    total_cost = (num_tokens / 1_000_000) * cost_per_million_tokens
+
+    return total_cost
 
 
 # break line every 80 characters if line is longer than 80 characters

@@ -1,20 +1,39 @@
+import os
+
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
+from crewai_tools import FileReadTool, SerperDevTool
+from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
 from tools.image_generator import Dalle3ImageGeneratorTool
 from tools.search import SearchTools
+from tools.video_compiler import VideoCompilationTool
 from tools.voice_over_generator import VoiceOverTool
 
 # Uncomment the following line to use an example of a custom tool
 # from instagram.tools.custom_tool import MyCustomTool
 
-# Check our tools documentations for more information on how to use them
-# from crewai_tools import SerperDevTool
+# Load the .env file
+load_dotenv()
 
-# Define tools
+# Set environment variables
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+SERPER_API_KEY = os.getenv("SERPER_API_KEY")
+FFMPEG_PATH = os.getenv("FFMPEG_PATH")
+OPENAI_MODEL_NAME = os.getenv("OPENAI_MODEL_NAME")
+
+# os.environ["OPENAI_MODEL_NAME"] = "gpt-3.5-turbo"
+# os.environ["OPENAI_MODEL_NAME"] = "gpt-4o"
+
+# Instantiate tools
+search_tool = SerperDevTool()
 image_generator_tool = Dalle3ImageGeneratorTool()
 search_internet_tool = SearchTools.search_internet
 open_webpage_tool = SearchTools.open_page
+read_scene_description_tool = FileReadTool(file_path="./output/scene_description.md")
+read_narration_script_tool = FileReadTool(file_path="./output/narration_script.md")
 voice_over_tool = VoiceOverTool()
+video_compiler_tool = VideoCompilationTool()
 
 
 @CrewBase
@@ -28,18 +47,11 @@ class NarratedAnimationCrew:
     def scriptwriter(self) -> Agent:
         return Agent(
             config=self.agents_config["scriptwriter"],
-            tools=[
-                search_internet_tool,
-                open_webpage_tool,
-            ],
+            tools=[],
+            allow_delegation=True,
             cache=True,
             verbose=True,
-        )
-
-    @agent
-    def screenwriter(self) -> Agent:
-        return Agent(
-            config=self.agents_config["screenwriter"], cache=True, verbose=True
+            memory=True,
         )
 
     @agent
@@ -47,19 +59,37 @@ class NarratedAnimationCrew:
         return Agent(
             config=self.agents_config["scene_illustrator"],
             verbose=True,
+            tools=[image_generator_tool],
             allow_delegation=False,
+            memory=True,
         )
 
     @agent
-    def narrator(self) -> Agent:
-        return Agent(config=self.agents_config["narrator"], verbose=True)
+    def screenwriter(self) -> Agent:
+        return Agent(
+            config=self.agents_config["screenwriter"],
+            tools=[],
+            cache=True,
+            allow_delegation=True,
+            verbose=True,
+        )
 
     @agent
-    def video_editor(self) -> Agent:
+    def voice_over_agent(self) -> Agent:
         return Agent(
-            config=self.agents_config["video_editor"],
-            verbose=True,
+            config=self.agents_config["voice_over_agent"],
+            tools=[voice_over_tool],
             allow_delegation=False,
+            verbose=True,
+        )
+
+    @agent
+    def video_compilation_agent(self) -> Agent:
+        return Agent(
+            config=self.agents_config["video_compilation_agent"],
+            tools=[video_compiler_tool],
+            allow_delegation=False,
+            verbose=True,
         )
 
     @task
@@ -67,15 +97,8 @@ class NarratedAnimationCrew:
         return Task(
             config=self.tasks_config["generate_scene_description"],
             agent=self.scriptwriter(),
-            output_file="output/scene_description.md",
-        )
-
-    @task
-    def generate_narration_scripts(self) -> Task:
-        return Task(
-            config=self.tasks_config["generate_narration_scripts"],
-            agent=self.screenwriter(),
-            output_file="output/narration_script.md",
+            human_input=True,
+            output_file="./output/scene_description.md",
         )
 
     @task
@@ -83,37 +106,42 @@ class NarratedAnimationCrew:
         return Task(
             config=self.tasks_config["generate_frame_images"],
             agent=self.scene_illustrator(),
-            output_file="visual-content.md",
+            # async_execution=True,  # Allow asynchronous execution
         )
 
     @task
-    def generate_voice_over_sound(self) -> Task:
+    def generate_narration_scripts(self) -> Task:
         return Task(
-            config=self.tasks_config["generate_voice_over_sound"],
-            agent=self.narrator(),
+            config=self.tasks_config["generate_narration_scripts"],
+            agent=self.screenwriter(),
+            human_input=True,
+            output_file="./output/narration_script.md",
         )
 
     @task
-    def compile_video(self) -> Task:
+    def generate_voice_over(self) -> Task:
         return Task(
-            config=self.tasks_config["compile_video"],
-            agent=self.video_editor(),
-            output_file="final-content-strategy.md",
+            config=self.tasks_config["generate_voice_over"],
+            agent=self.voice_over_agent(),
+            # async_execution=True,  # Allow asynchronous execution
+        )
+
+    @task
+    def generate_video(self) -> Task:
+        return Task(
+            config=self.tasks_config["generate_video"],
+            agent=self.video_compilation_agent(),
         )
 
     @crew
     def crew(self) -> Crew:
         """Creates the Narrated Animation Generator crew"""
         return Crew(
-            agents=[self.scriptwriter, self.screenwriter],
-            tasks=[
-                self.generate_scene_description,
-                self.generate_narration_scripts,
-            ],
+            agents=self.agents,  # Automatically created by the @agent decorator
+            tasks=self.tasks,  # Automatically created by the @task decorator
             process=Process.sequential,
             verbose=2,
             memory=True,
-            # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
         )
 
     # @crew
@@ -122,7 +150,10 @@ class NarratedAnimationCrew:
     #     return Crew(
     #         agents=self.agents,  # Automatically created by the @agent decorator
     #         tasks=self.tasks,  # Automatically created by the @task decorator
-    #         process=Process.sequential,
+    #         manager_llm=ChatOpenAI(
+    #             temperature=0, model="gpt-4o"
+    #         ),  # Mandatory for hierarchical process
+    #         process=Process.hierarchical,
     #         verbose=2,
-    #         # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
+    #         memory=True,
     #     )
