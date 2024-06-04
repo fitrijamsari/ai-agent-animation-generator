@@ -15,7 +15,7 @@ User Input: Take the name of a famous person from the user.
 ### 2. Scene Description Generation:
 
 Agent: Scriptwriter  
-Task: Generate the overall scene description based on the given person. Due to policy restriction for OpenAI, Dalle 3 can not generate images of well known people and any trademarking or branding element. Therefore, I include in the prompt to change the name of given famous person with any fictional name.
+Task: Generate the overall scene description based on the given person. Due to policy restriction for OpenAI, Dalle 3 can not generate images of well known people and any trademarking or branding element. Therefore, I include in the prompt to change the name of given famous person with any fictional name. Here I assign for the agent to scrape data from web for the actual data. If remove, the agent will use all the knowledge of the OPENAI model.
 
 ### 3. Script Generation:
 
