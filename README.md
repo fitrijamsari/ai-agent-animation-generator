@@ -2,7 +2,9 @@
 
 ## INTRODUCTION
 
-This project is my personal project to generate short animation about any famous biography using crewai. The idea is to produce 1 minute duration of animation videos with the following workflow:
+![Auto Animation Generator](img/Screenshot.png)
+
+This project is my personal project to generate short animation about any famous biography using CrewAI. The idea is just to take an name of well known person, about 1 minutes video will be generated. However, due to OpenAI restriction policy for generating well known person images, i convert the person name to fictional name. The idea is to produce 1 minute duration of animation videos with the following workflow:
 
 ## THE WORKFLOW
 
@@ -13,112 +15,27 @@ User Input: Take the name of a famous person from the user.
 ### 2. Scene Description Generation:
 
 Agent: Scriptwriter  
-Task: Generate the overall scene description based on the given person.
+Task: Generate the overall scene description based on the given person. Due to policy restriction for OpenAI, Dalle 3 can not generate images of well known people and any trademarking or branding element. Therefore, I include in the prompt to change the name of given famous person with any fictional name.
 
 ### 3. Script Generation:
 
 Agent: Screenwriter  
-Task: Generate a script for each frame (5-6 seconds per frame).
+Task: Generate a script for each frame (5-6 seconds per frame) based on scene description.
 
 ### 4. Image Generation:
 
 Agent: Scene Illustrator  
-Task: Generate images for each frame based on the scene descriptions.
+Task: Generate images using Dalle 3 for each frame based on the scene descriptions.
 
 ### 5. Voice Over Script Generation:
 
-Agent: Narrator  
+Agent: Voice Over Agent  
 Task: Generate the voice-over script for each frame.
 
 ### 6. Compile Video:
 
 Agent: Video Editor  
-Task: Compile the images, voice-over, and subtitles into a video.
-
-### 7. User Confirmation:
-
-Process: After each task, get user confirmation before proceeding to the next task.
-
-## AGENTS & TASKS
-
-### Agents
-
-#### 1. Scriptwriter
-
-Role: Generate the overall scene description.  
-Goal: Create a vivid and engaging scene description based on the famous person.  
-Backstory: A creative mind with a knack for crafting engaging and vivid scene descriptions.  
-Tools: LLM tool for generating descriptions.
-
-#### 2. Screenwriter
-
-Role: Generate scripts for each frame.  
-Goal: Break down the overall scene description into detailed scripts for each frame.  
-Backstory: A professional screenwriter with a talent for concise and impactful writing.  
-Tools: LLM tool for script generation.
-
-#### 3. Scene Illustrator
-
-Role: Generate images for each frame.  
-Goal: Create detailed illustrations based on the scene descriptions.  
-Backstory: An experienced artist with a flair for bringing scenes to life through illustrations.  
-Tools: DALL-E or a similar image generation tool.
-
-#### 4. Narrator
-
-Role: Generate voice-over scripts for each frame.  
-Goal: Create engaging voice-over scripts that align with the scene descriptions and scripts.  
-Backstory: A professional narrator with a clear and engaging voice.  
-Tools: LLM tool for script generation.
-
-#### 5.Video Editor
-
-Role: Compile the images, voice-over, and subtitles into a video.  
-Goal: Create a cohesive video from the generated assets.  
-Backstory: A skilled video editor with expertise in combining multimedia elements into engaging videos.  
-Tools: FFmpeg or a similar video editing tool.
-
-### Tasks
-
-#### 1. Generate Scene Description
-
-Description: Generate an overall scene description for the famous person.  
-Expected Output: A comprehensive scene description.  
-Tools: LLM tool.  
-Agent: Scriptwriter.
-
-#### 2.Generate Frame Scripts
-
-Description: Create scripts for each frame based on the scene description.  
-Expected Output: Scripts for each frame (5-6 seconds per frame).  
-Tools: LLM tool.  
-Agent: Screenwriter.
-
-#### 3. Generate Frame Images
-
-Description: Generate images for each frame based on the frame scripts.  
-Expected Output: Illustrations for each frame.  
-Tools: DALL-E or a similar image generation tool.  
-Agent: Scene Illustrator.
-
-#### 4. Generate Voice Over Scripts
-
-Description: Create voice-over scripts for each frame.  
-Expected Output: Voice-over scripts for each frame.  
-Tools: LLM tool.  
-Agent: Narrator.
-
-#### 5. User Confirmation
-
-Description: Confirm each generated output with the user before proceeding.  
-Expected Output: User confirmation for each step.
-
-#### 6. Compile Video
-
-Description: Compile the images, voice-over, and subtitles into a video.  
-Expected Output: A final video file.  
-Tools: FFmpeg or a similar video editing tool.  
-Agent: Video Editor.
+Task: Compile the images, voice-over into a video.
 
 ## TECHNOLOGY USED
 
@@ -126,7 +43,9 @@ The following modules are used in this project:
 
 - OpenAI
 - CrewAI
+- Dalle 3
 - LangChain
+- Elevenlabs
 
 ## GETTING STARTED
 
@@ -137,12 +56,16 @@ To run this demo project, create an virtual environment and install the src pack
 2. create .env files with the following secret keys:
 
 ```bash
-LANGCHAIN_TRACING_V2='true'
-LANGCHAIN_ENDPOINT='https://api.smith.langchain.com'
+OPENAI_API_KEY=<your-api-key>
+OPENAI_MODEL_NAME=gpt-4o
+SERPER_API_KEY=<your-api-key>
+ELEVENLABS_API_KEY=<your-api-key>
+FIRECRAWL_API_KEY=<your-api-key>
+
+LANGCHAIN_TRACING_V2=true
 LANGCHAIN_API_KEY=<your-api-key>
 
-OPENAI_API_KEY=<your-api-key>
-GROQ_API_KEY=<your-api-key>
+FFMPEG_EXE_PATH=/opt/homebrew/bin/ffmpeg
 ```
 
 3. Install Dependencies
@@ -151,21 +74,27 @@ GROQ_API_KEY=<your-api-key>
 pip install -r requirements.txt
 ```
 
-4. Run the application
+4. open src/animation/main.py and edit the "famous_name"
+
+5. Run the application
 
 ```bash
-streamlit run src/app.py
+python src/animation/main.py
 ```
 
 ## Challenges
 
-1.
+1. Every animation generated might cost about ~$0.50USD.
+2. For some agents, human validation has been set, however upon feedback, the agent make changes but not ask for validation again.
+3. For hierarchical process, I unable to customize the Asynchronous Execution of tasks. The process only be done by the manager and you can not customize it.
+4. Prompt Engineering need to be done properly for each agents and tasks.
 
 ## To Do
 
-1.
+1. To generate the voice over narration mp3 file using elevenlabs API.
+2. Use Streamlit for the user interface.
 
 ## Reference & Documentation
 
-1. [LangChain with SQL Documentation](https://python.langchain.com/docs/use_cases/sql/quickstart/)
-2. [Streamlit Documentation](https://docs.streamlit.io/get-started/tutorials/create-an-app)
+1. [CrewAI Documentation](https://docs.crewai.com/)
+2. [Elevenlabs Documentation](https://elevenlabs.io/docs/api-reference/getting-started)

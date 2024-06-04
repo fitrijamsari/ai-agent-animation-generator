@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 from crew import NarratedAnimationCrew
-from crewai import Agent, Crew, Process, Task
 
 
 def run():
     inputs = {
-        "famous_person": "Lionel Messi",
+        "famous_person": "Cristiano Ronaldo",
         "image_folder": "./output/image_generator/",
         "audio_folder": "./output/voice_over_sound/",
         "output_file": "./output/final_video.mp4",

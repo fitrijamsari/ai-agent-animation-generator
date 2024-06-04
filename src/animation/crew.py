@@ -47,7 +47,7 @@ class NarratedAnimationCrew:
     def scriptwriter(self) -> Agent:
         return Agent(
             config=self.agents_config["scriptwriter"],
-            tools=[],
+            tools=[search_tool],
             allow_delegation=True,
             cache=True,
             verbose=True,
